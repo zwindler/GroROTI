@@ -6,6 +6,9 @@
 *.dylib
 groroti
 
+# try to ignore .goreleaser
+.goreleaser.yaml
+
 # Test binary, built with `go test -c`
 *.test
 
