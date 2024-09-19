@@ -15,7 +15,7 @@ import (
 )
 
 // SetupOTelSDK initializes OpenTelemetry with the OTLP exporter for tracing.
-func SetupOTelSDK(ctx context.Context, enable bool) (func(context.Context) error, error) {
+func SetupOTelSDK(ctx context.Context, enable bool) (func(context.Context) error, *trace.TracerProvider, error) {
 	if enable {
 		// Create a new OTLP HTTP exporter
 		client := otlptracehttp.NewClient(
@@ -25,7 +25,7 @@ func SetupOTelSDK(ctx context.Context, enable bool) (func(context.Context) error
 
 		exporter, err := otlptrace.New(ctx, client)
 		if err != nil {
-			return nil, fmt.Errorf("failed to create OTLP trace exporter: %w", err)
+			return nil, nil, fmt.Errorf("failed to create OTLP trace exporter: %w", err)
 		}
 
 		// Create a resource to describe this service
@@ -35,7 +35,7 @@ func SetupOTelSDK(ctx context.Context, enable bool) (func(context.Context) error
 			),
 		)
 		if err != nil {
-			return nil, fmt.Errorf("failed to create resource: %w", err)
+			return nil, nil, fmt.Errorf("failed to create resource: %w", err)
 		}
 
 		// Set up the tracer provider with the exporter and resource
@@ -57,7 +57,7 @@ func SetupOTelSDK(ctx context.Context, enable bool) (func(context.Context) error
 			return err
 		}
 
-		return shutdown, nil
+		return shutdown, tp, nil
 	}
-	return nil, nil
+	return nil, nil, nil
 }

@@ -15,10 +15,13 @@ import (
 	"github.com/deezer/groroti/internal/services"
 	"github.com/deezer/groroti/internal/staticEmbed"
 	"github.com/rs/zerolog/log"
+	"go.opentelemetry.io/otel/sdk/trace"
 )
 
-var Version string
-
+var (
+	Version string
+	TP *trace.TracerProvider
+)
 func main() {
 	if err := run(); err != nil {
 		log.Fatal().Msgf(err.Error())
@@ -37,7 +40,7 @@ func run() (err error) {
 	defer stop()
 
 	// Set up OpenTelemetry.
-	otelShutdown, err := middlewares.SetupOTelSDK(ctx, configRepository.EnableTracing)
+	otelShutdown, TP, err := middlewares.SetupOTelSDK(ctx, configRepository.EnableTracing)
 	if err != nil {
 		return
 	}
