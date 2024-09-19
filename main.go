@@ -40,10 +40,11 @@ func run() (err error) {
 	defer stop()
 
 	// Set up OpenTelemetry.
-	otelShutdown, TP, err := middlewares.SetupOTelSDK(ctx, configRepository.EnableTracing)
+	otelShutdown, tp, err := middlewares.SetupOTelSDK(ctx, configRepository.EnableTracing)
 	if err != nil {
 		return
 	}
+	TP = tp
 	// Handle shutdown properly so nothing leaks.
 	defer func() {
 		err = errors.Join(err, otelShutdown(context.Background()))
