@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"net"
 	"net/http"
@@ -10,18 +9,16 @@ import (
 	"os/signal"
 	"time"
 
-	"github.com/deezer/groroti/internal/middlewares"
 	"github.com/deezer/groroti/internal/model"
 	"github.com/deezer/groroti/internal/services"
 	"github.com/deezer/groroti/internal/staticEmbed"
 	"github.com/rs/zerolog/log"
-	"go.opentelemetry.io/otel/sdk/trace"
 )
 
 var (
 	Version string
-	TP *trace.TracerProvider
 )
+
 func main() {
 	if err := run(); err != nil {
 		log.Fatal().Msgf(err.Error())
@@ -39,17 +36,6 @@ func run() (err error) {
 	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt)
 	defer stop()
 
-	// Set up OpenTelemetry.
-	otelShutdown, tp, err := middlewares.SetupOTelSDK(ctx, configRepository.EnableTracing)
-	if err != nil {
-		return
-	}
-	TP = tp
-	// Handle shutdown properly so nothing leaks.
-	defer func() {
-		err = errors.Join(err, otelShutdown(context.Background()))
-	}()
-
 	log.Info().Msgf("GroROTI version v%s", Version)
 	sqliteDatabase := model.InitDatabase()
 	defer sqliteDatabase.Close()
@@ -61,8 +47,7 @@ func run() (err error) {
 	}
 
 	services.Version = Version
-	services.Register()
-
+	services.Register(ctx)
 
 	addr := configRepository.BuildServerAddr()
 
