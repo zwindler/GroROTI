@@ -72,7 +72,7 @@ func SetupOTelMetrics(ctx context.Context, config config.Config) (func(context.C
 			// Ensure all metrics are exported before shutting down
 			err := MP.Shutdown(ctx)
 			if err != nil {
-				log.Printf("failed to shutdown meter provider: %v", err)
+				log.Error().Err(err).Msg("failed to shutdown meter provider")
 			}
 			return err
 		}

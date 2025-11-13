@@ -66,9 +66,13 @@ func initOTelMetrics() error {
 // this allows to avoid querying too much the db
 func recordMetrics() {
 	// Initialize OTel metrics if enabled
+	var otelInitialized bool
 	if currentConfig.EnableOTelMetrics {
 		if err := initOTelMetrics(); err != nil {
 			log.Error().Err(err).Msg("failed to initialize OpenTelemetry metrics")
+			otelInitialized = false
+		} else {
+			otelInitialized = true
 		}
 	}
 
@@ -83,8 +87,8 @@ func recordMetrics() {
 				active_rotis.Set(float64(activeCount))
 			}
 
-			// Record to OpenTelemetry if enabled
-			if currentConfig.EnableOTelMetrics && otelTotalRotis != nil && otelActiveRotis != nil {
+			// Record to OpenTelemetry if enabled and initialized successfully
+			if currentConfig.EnableOTelMetrics && otelInitialized && otelTotalRotis != nil && otelActiveRotis != nil {
 				ctx := context.Background()
 				otelTotalRotis.Record(ctx, totalCount)
 				otelActiveRotis.Record(ctx, activeCount)
