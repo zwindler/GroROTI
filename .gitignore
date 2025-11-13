@@ -27,3 +27,7 @@ bin/
 
 # Ignore release-env secrets
 .release-env
+
+# Ignore build artifacts
+sysroots.tar.bz2
+sysroots/
