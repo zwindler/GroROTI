@@ -20,6 +20,7 @@ clean_over_time = 30
 
 # OpenTelemetry configuration
 enable_tracing = false
+enable_otel_metrics = false
 otlp_endpoint = "localhost:4318"
 # otlp_basic_username = ""
 # otlp_basic_password = ""

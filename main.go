@@ -19,7 +19,8 @@ import (
 
 var (
 	Version string
-	otelShutdown func(context.Context) error
+	otelShutdown        func(context.Context) error
+	otelMetricsShutdown func(context.Context) error
 )
 
 func main() {
@@ -48,6 +49,18 @@ func run() (err error) {
 	defer func() {
 		if otelShutdown != nil {
 			err = errors.Join(err, otelShutdown(context.Background()))
+		}
+	}()
+
+	// Set up OpenTelemetry Metrics.
+	otelMetricsShutdown, err = middlewares.SetupOTelMetrics(ctx, configRepository)
+	if err != nil {
+		return
+	}
+	// Handle shutdown properly so nothing leaks.
+	defer func() {
+		if otelMetricsShutdown != nil {
+			err = errors.Join(err, otelMetricsShutdown(context.Background()))
 		}
 	}()
 

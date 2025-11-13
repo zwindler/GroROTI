@@ -20,6 +20,7 @@ const (
 	qrCodeSizeEnvVar  = "QR_CODE_SIZE"
 	cleanOverTime     = "CLEAN_OVER_TIME"
 	enableTracing     = "ENABLE_TRACING"
+	enableOTelMetrics = "ENABLE_OTEL_METRICS"
 	OTLPEndpoint      = "OTLP_ENDPOINT"
 	OTLPBasicUsername = "OTLP_BASIC_USERNAME"
 	OTLPBasicPassword = "OTLP_BASIC_PASSWORD"
@@ -130,6 +131,11 @@ func (c *Config) SetConfigFromEnv() (err error) {
 	enableTracingFromEnv := os.Getenv(enableTracing)
 	if enableTracingFromEnv == "true" {
 		c.EnableTracing = true
+	}
+
+	enableOTelMetricsFromEnv := os.Getenv(enableOTelMetrics)
+	if enableOTelMetricsFromEnv == "true" {
+		c.EnableOTelMetrics = true
 	}
 
 	OTLPEndpointFromEnv := os.Getenv(OTLPEndpoint)
