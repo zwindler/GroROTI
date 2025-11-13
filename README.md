@@ -8,7 +8,8 @@ The UI and functionalities are really basic. Here is a quick overview:
 * Enable / disable textbox feedbacks in votes with a checkbox
 * share the link (or QR code) with people that need to vote
 * by default, ROTIs are cleaned 30 days after creation
-* golang (memory, gc...), http (latency, codes...) and groroti metrics are exposed on `/-/metrics` path
+* golang (memory, gc...), http (latency, codes...) and groroti metrics are exposed on `/-/metrics` path (Prometheus format by default)
+* OpenTelemetry support for traces and metrics (optional - can replace Prometheus metrics)
 * export ROTI results with a csv or a PNG file
 
 | <img src="binaries/home.png"> | <img src="binaries/vote.png"> |
@@ -103,7 +104,8 @@ You can customize some of the features of GroROTI. All those fields are optional
 * **qr code size** - default is "384" (in pixels), can be overridden with *QR_CODE_SIZE* environment variable or *qr_code_size* in configuration file
 * **clean over time** - when a new ROTI is created, remove all ROTIs that are older than xxx. Default is 30 (in days), can be overridden with *CLEAN_OVER_TIME* environment variable or *clean_over_time* in configuration file
 * **enable tracing** - default is "false", can be overridden with *ENABLE_TRACING* environment variable or *enable_tracing* in configuration file
-* **otlp endpoint** - default is "localhost:4318", can be overridden with *OTLP_ENDPOINT* environment variable or *otlp_endpoint* in configuration file
+* **enable otel metrics** - default is "false". When set to "true", OpenTelemetry metrics will be used instead of the legacy Prometheus metrics. Can be overridden with *ENABLE_OTEL_METRICS* environment variable or *enable_otel_metrics* in configuration file
+* **otlp endpoint** - default is "localhost:4318", can be overridden with *OTLP_ENDPOINT* environment variable or *otlp_endpoint* in configuration file. This endpoint is shared by both tracing and metrics when OpenTelemetry is enabled
 * **otlp HTTP basic auth username** - default is empty, which means no HTTP basic auth. Can be overridden with *OTLP_BASIC_USERNAME* environment variable or *otlp_basic_username* in configuration file
 * **otlp HTTP basic auth password** - default is empty, which means no HTTP basic auth. Can be overridden with *OTLP_BASIC_PASSWORD* environment variable or *otlp_basic_password* in configuration file
 
